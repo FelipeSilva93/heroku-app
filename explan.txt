@@ -1,0 +1,62 @@
+- Estrutura do heroku
+
+  - CLI
+  - Bancos de dados
+  - Dynos
+  - Extensões
+
+
+- O que é o PaaS?
+  - É uma caixa, teoricamente
+    - Essa caixa é uma Dyno
+      - Esse dyno é dividido em:
+      	- Stack -> sistemas operacionais e git por exemplo
+	- Buildpacks -> versão do python, versão do linux
+	- Nossa aplicação -> WSGI (gunicorn, vunicorn), não estar em modo de desenvolvimento
+	- SO -> Dependencias externas
+
+	*** Podemos mudar cada uma dessas caixinhas
+
+- CLI
+  - heroku login
+  - git init
+  - Instalar o gunicorn ou o uvicorn
+  - heroku create nome_do_projeto
+  - a ordem de adição dos buildpacks é primeiro poetry e depois python
+  - precisamos criar um buildpack no formato que o heroku entenda nossa aplicação, ou seja tz.
+    - temos que criar outro buildpack que entenda poetry, podemos procurar no google também:
+      - heroku buildpacks:add https://github.com/moneymeets/python-poetry-buildpack.git
+  - heroku buildpacks:add heroku/python
+  - criar um arquivo .Procfile com o seguinte código:
+    - web: gunicorn "app:create_app()"
+  
+  - depois de criado:
+    - git add .
+    - git commit -m "comment"
+    - git push
+    - git push heroku master
+
+    - Se fizer algo de errado no buildpacks, é só dar um clear.
+      - heroku buildpacks:clear
+
+- Possíveis problemas:
+  - Versão incompativel com python
+  - Incompatibilidade com alguma versão de biblioteca
+  - Não conseguiu acessar algo
+
+  - LER LOGS!
+
+
+- BANCOS DE DADOS NO HEROKU
+  - gratis:
+  - Postgres (mais simples e prático)
+  - Redis
+  - Apache Kafka
+
+- Usando o Postgres:
+  - Adicionar o banco na nossa aplicaçao:
+    - heroku addons:create heroku-postgresql:hobby-dev
+      - hobby-dev -> porque estamos usando de graça, testes...
+    - Conectar no banco de dados:
+      - heroku pg:credentials:url
+      	- podemos usar as informações dadas para conectar o dbeaver no banco de dados
